@@ -24,14 +24,11 @@ jobs:
       - name: Build the React app
         run: npm run build
 
-      - name: Print Commit SHA
-        run:  echo "Sha is = ${{ github.sha }}"
-
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
       - name: Build Docker image
-        run: docker build . -t marwilhelm/m324:latest
+        run: docker build . -t ${{ secrets.DOCKER_USERNAME }}/react-app:${{ github.sha }}
 
       - name: Push Docker image to Docker Hub
-        run: docker push marwilhelm/m324/M324:latest
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/react-app:${{ github.sha }}
