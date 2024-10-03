@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="953b2075-8f7c-4e9d-89e6-e1c5e5547814" name="Changes" comment="renamed cluster to 02" />
+    <list default="true" id="953b2075-8f7c-4e9d-89e6-e1c5e5547814" name="Changes" comment="renamed serv ice name dev">
+      <change beforePath="$PROJECT_DIR$/.github/workflows/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/main.yml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -66,7 +68,7 @@
       <option name="presentableId" value="Default" />
       <updated>1727939824672</updated>
       <workItem from="1727939826802" duration="755000" />
-      <workItem from="1727941510441" duration="3659000" />
+      <workItem from="1727941510441" duration="3962000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -132,7 +134,15 @@
       <option name="project" value="LOCAL" />
       <updated>1727946235531</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="renamed serv ice name dev">
+      <option name="closed" value="true" />
+      <created>1727946401284</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1727946401284</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -147,6 +157,7 @@
     <MESSAGE value="new pipeline 2" />
     <MESSAGE value="new pipeline 3" />
     <MESSAGE value="renamed cluster to 02" />
-    <option name="LAST_COMMIT_MESSAGE" value="renamed cluster to 02" />
+    <MESSAGE value="renamed serv ice name dev" />
+    <option name="LAST_COMMIT_MESSAGE" value="renamed serv ice name dev" />
   </component>
 </project>
