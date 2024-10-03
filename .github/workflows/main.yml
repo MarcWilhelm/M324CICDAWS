@@ -1,11 +1,9 @@
-name: CI/CD Pipeline to AWS ECS
+name: Build and Deploy Docker to AWS
 
 on:
   push:
     branches:
-      - main  # Der Branch, auf den du pushen möchtest
-    tags:
-      - 'v*'  # Tag-Push auslösen
+      - main
 
 jobs:
   build:
@@ -13,35 +11,51 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-
-      - name: Install dependencies
-        run: npm install
-
-
-
-      - name: Build the React app
-        run: npm run build
-
-      - name: Log in to Amazon ECR
+      - name: Set up AWS credentials for session
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+          aws configure set aws_session_token $AWS_SESSION_TOKEN
+          aws configure set region $AWS_DEFAULT_REGION
+
+      - name: Log in to Amazon ECR
+        run: |
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY }}
 
       - name: Build Docker image
-        run: docker build . -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-react-app:${{ github.ref_name }}
+        run: docker build -t my-docker-app .
+
+      - name: Tag Docker image
+        run: docker tag my-docker-app:latest ${{ secrets.ECR_REPOSITORY }}:latest
 
       - name: Push Docker image to Amazon ECR
-        run: docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-react-app:${{ github.ref_name }}
+        run: docker push ${{ secrets.ECR_REPOSITORY }}:latest
 
-      - name: Deploy to Amazon ECS
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up AWS credentials for session
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          aws ecs update-service --cluster my-ecs-cluster --service my-ecs-service --force-new-deployment --region $AWS_REGION
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+          aws configure set aws_session_token $AWS_SESSION_TOKEN
+          aws configure set region $AWS_DEFAULT_REGION
+
+
+      - name: Update ECS service
+        run: |
+          aws ecs update-service --cluster ref-card-01 --service ref-card-01-devt  --task-definition ref-card-01-devt-cluster my-ecs-cluster --service my-ecs-service --force-new-deployment --region $AWS_REGION

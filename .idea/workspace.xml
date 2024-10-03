@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="953b2075-8f7c-4e9d-89e6-e1c5e5547814" name="Changes" comment="init">
-      <change beforePath="$PROJECT_DIR$/.github/workflows/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/main.yml" afterDir="false" />
+    <list default="true" id="953b2075-8f7c-4e9d-89e6-e1c5e5547814" name="Changes" comment="new pipeline 2">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -69,7 +68,7 @@
       <option name="presentableId" value="Default" />
       <updated>1727939824672</updated>
       <workItem from="1727939826802" duration="755000" />
-      <workItem from="1727941510441" duration="758000" />
+      <workItem from="1727941510441" duration="1479000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -95,7 +94,23 @@
       <option name="project" value="LOCAL" />
       <updated>1727941598504</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="new pipeline">
+      <option name="closed" value="true" />
+      <created>1727942368421</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1727942368421</updated>
+    </task>
+    <task id="LOCAL-00005" summary="new pipeline 2">
+      <option name="closed" value="true" />
+      <created>1727942435438</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1727942435438</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -106,6 +121,8 @@
       <path value="$PROJECT_DIR$/.." />
     </ignored-roots>
     <MESSAGE value="init" />
-    <option name="LAST_COMMIT_MESSAGE" value="init" />
+    <MESSAGE value="new pipeline" />
+    <MESSAGE value="new pipeline 2" />
+    <option name="LAST_COMMIT_MESSAGE" value="new pipeline 2" />
   </component>
 </project>
