@@ -58,4 +58,4 @@ jobs:
 
       - name: Update ECS service
         run: |
-          aws ecs update-service --cluster ref-card-02 --service ref-card-02-dev  --task-definition ref-card-02-dev
+          aws ecs update-service --cluster ref-card-02 --service ref-card-02-dev  --task-definition ref-card-02-dev --network-configuration "awsvpcConfiguration={subnets=[subnet-0a3b3b8dc9c574421],securityGroups=[sg-0025a1fa3a6e2098b],assignPublicIp=ENABLED}"

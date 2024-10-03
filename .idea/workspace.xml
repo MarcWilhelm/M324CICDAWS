@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="953b2075-8f7c-4e9d-89e6-e1c5e5547814" name="Changes" comment="renamed serv ice name dev">
+    <list default="true" id="953b2075-8f7c-4e9d-89e6-e1c5e5547814" name="Changes" comment="removed region">
       <change beforePath="$PROJECT_DIR$/.github/workflows/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/main.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,7 +69,7 @@
       <option name="presentableId" value="Default" />
       <updated>1727939824672</updated>
       <workItem from="1727939826802" duration="755000" />
-      <workItem from="1727941510441" duration="3962000" />
+      <workItem from="1727941510441" duration="5512000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -142,7 +143,23 @@
       <option name="project" value="LOCAL" />
       <updated>1727946401284</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="removed code">
+      <option name="closed" value="true" />
+      <created>1727946588689</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1727946588689</updated>
+    </task>
+    <task id="LOCAL-00011" summary="removed region">
+      <option name="closed" value="true" />
+      <created>1727946739971</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1727946739971</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -158,6 +175,8 @@
     <MESSAGE value="new pipeline 3" />
     <MESSAGE value="renamed cluster to 02" />
     <MESSAGE value="renamed serv ice name dev" />
-    <option name="LAST_COMMIT_MESSAGE" value="renamed serv ice name dev" />
+    <MESSAGE value="removed code" />
+    <MESSAGE value="removed region" />
+    <option name="LAST_COMMIT_MESSAGE" value="removed region" />
   </component>
 </project>
