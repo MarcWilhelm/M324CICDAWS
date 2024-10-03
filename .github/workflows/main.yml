@@ -58,4 +58,4 @@ jobs:
 
       - name: Update ECS service
         run: |
-          aws ecs update-service --cluster ref-card-02 --service ref-card-01-devt  --task-definition ref-card-01-devt-cluster my-ecs-cluster --service my-ecs-service --force-new-deployment --region $AWS_REGION
+          aws ecs update-service --cluster ref-card-02 --service ref-card-02-dev  --task-definition ref-card-02-dev my-ecs-cluster --service my-ecs-service --force-new-deployment --region $AWS_REGION
