@@ -1,47 +1,55 @@
-# CI/CD Pipeline für eine React-Anwendung mit Docker Hub
+# Build and Deploy Docker Application to AWS
 
-Diese README beschreibt die Konfiguration einer CI/CD-Pipeline, die auf jede Änderung im `main`-Branch reagiert, die Anwendung baut und ein Docker-Image erstellt und auf Docker Hub veröffentlicht.
+This repository contains a GitHub Actions workflow to automate the build and deployment of a Docker application to AWS. The workflow consists of two main jobs: `build` and `deploy`.
 
-## Voraussetzungen
+## Workflow Configuration
 
-Bevor du mit dieser Pipeline arbeitest, benötigst du:
+The GitHub Actions workflow is triggered on a `push` event to the `main` branch. It performs the following steps:
 
-- **Docker Hub Konto**: Für die Veröffentlichung des Docker-Images.
-- **GitHub Repository**: Für den Quellcode der React-Anwendung.
-- **GitHub Secrets**: Füge dein Docker Hub-Username (`DOCKER_USERNAME`) und Passwort (`DOCKER_PASSWORD`) als GitHub Secrets in deinem Repository hinzu.
+### 1. Build Job
 
-## Schritte der Pipeline
+The `build` job includes the following steps:
 
-Die Pipeline führt die folgenden Schritte durch:
+- **Checkout Code**: Retrieves the latest code from the `main` branch.
+- **Set Up AWS Credentials**: Configures AWS credentials for the session using secrets stored in GitHub.
+- **Log In to Amazon ECR**: Authenticates Docker with Amazon Elastic Container Registry (ECR) to enable image pushes.
+- **Build Docker Image**: Builds the Docker image for the application.
+- **Tag Docker Image**: Tags the Docker image for the ECR repository.
+- **Push Docker Image**: Pushes the tagged Docker image to Amazon ECR.
 
-1. **Checkout Code**  
-   Der Quellcode wird aus dem GitHub-Repository ausgecheckt. Dies stellt sicher, dass der neueste Stand der Anwendung für den Build-Prozess verfügbar ist.
+### 2. Deploy Job
 
-2. **Set up Node.js**  
-   Node.js wird installiert, um die Abhängigkeiten der React-Anwendung zu verwalten und die App zu bauen. Hier wird Node.js in der Version 16 verwendet, dies kann je nach Projektanforderungen angepasst werden.
+The `deploy` job runs after the `build` job completes and includes the following steps:
 
-3. **Install Dependencies**  
-   Dieser Schritt installiert alle Abhängigkeiten der Anwendung mittels `npm install`. Dadurch werden alle Bibliotheken und Pakete, die in der `package.json` definiert sind, installiert.
+- **Set Up AWS Credentials**: Reconfigures AWS credentials for deployment.
+- **Update ECS Service**: Updates the Amazon ECS service with the latest task definition, applying a specified network configuration.
 
-4. **Build the React App**  
-   Die Anwendung wird mit `npm run build` gebaut, um eine Produktionsversion zu erstellen. Dieser Schritt generiert die optimierten Dateien für den Einsatz in der Produktion.
+## Requirements
 
-5. **Log in to Docker Hub**  
-   Die Pipeline meldet sich bei Docker Hub an, um das erstellte Docker-Image später hochladen zu können. Die Anmeldedaten werden aus den GitHub Secrets (`DOCKER_USERNAME` und `DOCKER_PASSWORD`) abgerufen.
+1. **AWS Secrets**: Store your AWS credentials in GitHub Secrets with the following names:
+   - `AWS_ACCESS_KEY_ID`
+   - `AWS_SECRET_ACCESS_KEY`
+   - `AWS_SESSION_TOKEN` (if using temporary session tokens)
+   - `AWS_REGION` (e.g., `us-west-2`)
+   - `ECR_REPOSITORY` (Amazon ECR repository URI)
 
-6. **Build Docker Image**  
-   Das Docker-Image wird erstellt. Hier wird der Befehl `docker build` ausgeführt, wobei das Image auf Basis des Dockerfiles erstellt wird. Das Image wird mit dem Namen `react-app:latest` markiert und dem Docker Hub-Benutzernamen vorangestellt.
+2. **AWS Resources**: Ensure that the following AWS resources are set up:
+   - **Amazon ECR**: A repository to store Docker images.
+   - **Amazon ECS**: A cluster and service to run the Docker container.
+   - **Network Configuration**: Security groups and subnets for the ECS service.
 
-7. **Push Docker Image to Docker Hub**  
-   Das erstellte Docker-Image wird in das Docker Hub Repository hochgeladen, damit es dort gespeichert und später von anderen Umgebungen abgerufen werden kann.
+## Usage
 
-8. **Abschluss des Jobs**  
-   Nach erfolgreicher Ausführung aller Schritte wird der Job abgeschlossen.
+1. Commit and push your changes to the `main` branch.
+2. The workflow will automatically build, tag, and push the Docker image to Amazon ECR.
+3. The `deploy` job will then update the Amazon ECS service to use the new Docker image.
 
-## Pipeline-Konfigurationsdatei (ci.yml)
+## Example Workflow File
+
+Below is the complete GitHub Actions workflow:
 
 ```yaml
-name: CI/CD Pipeline
+name: Build and Deploy Docker to AWS
 
 on:
   push:
@@ -54,24 +62,50 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16' # Passe die Node.js-Version nach Bedarf an
+      - name: Set up AWS credentials for session
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+        run: |
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+          aws configure set aws_session_token $AWS_SESSION_TOKEN
+          aws configure set region $AWS_DEFAULT_REGION
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build the React app
-        run: npm run build
-
-      - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      - name: Log in to Amazon ECR
+        run: |
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY }}
 
       - name: Build Docker image
-        run: docker build . -t ${{ secrets.DOCKER_USERNAME }}/react-app:latest
+        run: docker build -t my-docker-app .
 
-      - name: Push Docker image to Docker Hub
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/react-app:latest
+      - name: Tag Docker image
+        run: docker tag my-docker-app:latest ${{ secrets.ECR_REPOSITORY }}:latest
+
+      - name: Push Docker image to Amazon ECR
+        run: docker push ${{ secrets.ECR_REPOSITORY }}:latest
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up AWS credentials for session
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+        run: |
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+          aws configure set aws_session_token $AWS_SESSION_TOKEN
+          aws configure set region $AWS_DEFAULT_REGION
+
+      - name: Update ECS service
+        run: |
+          aws ecs update-service --cluster ref-card-02 --service ref-card-02-dev  --task-definition ref-card-02-dev --network-configuration "awsvpcConfiguration={subnets=[subnet-0a3b3b8dc9c574421],securityGroups=[sg-0025a1fa3a6e2098b],assignPublicIp=ENABLED}"
